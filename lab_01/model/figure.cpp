@@ -1,48 +1,75 @@
 #include "figure.h"
-#include <QDebug>
 
-void figure_add_point(figure_t &figure, point_t &point)
+figure_t figure_init()
 {
-    figure.points.push_back(point);
+    figure_t figure;
+
+    points_init(figure.points);
+
+    links_init(figure.links);
+
+    return figure;
 }
 
-void figure_add_link(figure_t &figure, point_link_t &link)
+void figure_clear(figure_t &figure)
 {
-    figure.links.push_back(link);
+    points_clear(figure.points);
+    links_clear(figure.links);
 }
 
 point_t figure_point(figure_t &figure, int index)
 {
-    return figure.points[index];
+    return points_point(figure.points, index);
 }
 
-figure_t figure_scan(FILE *stream, bool &ok)
+point_link_t figure_link(figure_t &figure, int index)
 {
-    figure_t figure;
+    return links_link(figure.links, index);
+}
 
-    int n;
+error_t figure_scan(figure_t &figure, FILE *stream)
+{
+    if (stream == NULL)
+        return FILE_OPEN_ERROR;
 
-    ok = (fscanf(stream, "%d", &n) == 1);
-    for (int i = 0; ok && i < n; i++)
+    figure = figure_init();
+
+    error_t rc = points_scan(figure.points, stream);
+    if (rc == SUCCESS)
     {
-        point_t point = point_scan(stream, ok);
-        if (ok)
-            figure_add_point(figure, point);
+        rc = links_scan(figure.links, stream);
+        if (rc)
+            points_clear(figure.points);
     }
 
-    if (ok)
+    return rc;
+}
+
+error_t figure_load(figure_t &figure, const char *filename)
+{
+    if (filename == NULL)
+        return FILE_OPEN_ERROR;
+
+    error_t rc = SUCCESS;
+
+    FILE *stream = fopen(filename, "r");
+    if (stream == NULL)
+        rc = FILE_OPEN_ERROR;
+    else
     {
-        int m;
-        ok = (fscanf(stream, "%d", &m) == 1);
-        for (int i = 0; ok && i < m; i++)
+        figure_t current_figure;
+
+        rc = figure_scan(current_figure, stream);
+        fclose(stream);
+
+        if (rc == SUCCESS)
         {
-            point_link_t link = link_scan(stream, ok);
-            if (ok)
-                figure_add_link(figure, link);
+            figure_clear(figure);
+            figure = current_figure;
         }
     }
 
-    return figure;
+    return rc;
 }
 
 point_t figure_center(figure_t &figure)
@@ -50,74 +77,135 @@ point_t figure_center(figure_t &figure)
     return bounding_cube_center(figure.bounds);
 }
 
-void figure_rotate(figure_t &figure, double ax, double ay, double az)
+point_t figure_center_negative(figure_t &figure)
 {
-    point_t center = figure_center(figure);
-    point_t center_negative = center;
-    point_scale(center_negative, -1, -1, -1);
-
-    for (auto point: figure.points)
-    {
-        point_move(point, center_negative);
-
-        point_rotate(point, ax, ay, az);
-
-        point_move(point, center);
-    }
+    point_t center = bounding_cube_center(figure.bounds);
+    point_reflect_xyz(center);
+    return center;
 }
 
-void figure_move(figure_t &figure, double dx, double dy, double dz)
+error_t figure_rotate(figure_t &figure, point_t &params)
 {
+    error_t rc = SUCCESS;
+
     point_t center = figure_center(figure);
-    point_t center_negative = center;
-    point_scale(center_negative, -1, -1, -1);
+    point_t center_negative = figure_center_negative(figure);
 
-    for (auto point: figure.points)
+    rc = points_move(figure.points, center_negative);
+
+    if (rc == SUCCESS)
     {
-        point_move(point, center_negative);
+        rc = points_rotate(figure.points, params);
 
-        point_move(point, dx, dy, dz);
-
-        point_move(point, center);
+        if (rc == SUCCESS)
+            rc = points_move(figure.points, center);
     }
+
+    return rc;
 }
 
-void figure_scale(figure_t &figure, double kx, double ky, double kz)
+error_t figure_move(figure_t &figure, point_t &params)
 {
+    error_t rc = SUCCESS;
+
     point_t center = figure_center(figure);
-    point_t center_negative = center;
-    point_scale(center_negative, -1, -1, -1);
+    point_t center_negative = figure_center_negative(figure);
 
-    for (auto point: figure.points)
+    rc = points_move(figure.points, center_negative);
+
+    if (rc == SUCCESS)
     {
-        point_move(point, center_negative);
+        rc = points_move(figure.points, params);
 
-        point_move(point, kx, ky, kz);
-
-        point_move(point, center);
+        if (rc == SUCCESS)
+            rc = points_move(figure.points, center);
     }
+
+    return rc;
 }
 
-void figure_bounding_cube_update(figure_t &figure)
+error_t figure_scale(figure_t &figure, point_t &params)
 {
-    double minx = figure_point(figure, 0).x;
-    double miny = figure_point(figure, 0).y;
-    double minz = figure_point(figure, 0).z;
+    error_t rc = SUCCESS;
 
-    double maxx = figure_point(figure, 0).x;
-    double maxy = figure_point(figure, 0).y;
-    double maxz = figure_point(figure, 0).z;
+    point_t center = figure_center(figure);
+    point_t center_negative = figure_center_negative(figure);
 
-    for (auto point: figure.points)
+    rc = points_move(figure.points, center_negative);
+
+    if (rc == SUCCESS)
     {
-        minx = fmin(minx, point.x);
-        miny = fmin(miny, point.y);
-        minz = fmin(minz, point.z);
+        rc = points_scale(figure.points, params);
 
-        maxx = fmax(maxx, point.x);
-        maxy = fmax(maxy, point.y);
-        maxz = fmax(maxz, point.z);
+        if (rc == SUCCESS)
+            rc = points_move(figure.points, center);
     }
 
-    figure.bounds = bounding_cube(minx, miny, minz, maxx, maxy, maxz);
+    return rc;
+}
+
+error_t figure_bounding_cube_update(figure_t &figure)
+{
+    error_t rc = SUCCESS;
+
+    point_t min_corner;
+    point_t max_corner;
+
+    rc = points_corners(min_corner, max_corner, figure.points);
+
+    if (rc == SUCCESS)
+        figure.bounds = bounding_cube_init(min_corner, max_corner);
+
+    return rc;
+}
+
+error_t figure_print(figure_t &figure, FILE *stream)
+{
+    error_t rc = SUCCESS;
+
+    if (stream == NULL)
+        rc = FILE_WRITE_ERROR;
+    else
+    {
+        rc = points_print(figure.points, stream);
+        if (rc == SUCCESS)
+            rc = links_print(figure.links, stream);
+        fclose(stream);
+    }
+
+    return rc;
+}
+
+error_t figure_save(figure_t &figure, const char *filename)
+{
+    error_t rc = SUCCESS;
+
+    if (filename == NULL)
+        rc = FILE_WRITE_ERROR;
+    else if (figure_empty(figure))
+        rc = NOT_DATA_WRITE_ERROR;
+    else
+    {
+        FILE *stream = fopen(filename, "w");
+
+        if (stream == NULL)
+            rc = FILE_WRITE_ERROR;
+        else
+        {
+            rc = figure_print(figure, stream);
+            fclose(stream);
+        }
+    }
+
+    return rc;
+}
+
+int figure_links_size(figure_t &figure)
+{
+    return links_size(figure.links);
+}
+
+bool figure_empty(figure_t &figure)
+{
+    return (points_empty(figure.points) || links_empty(figure.links));
 }

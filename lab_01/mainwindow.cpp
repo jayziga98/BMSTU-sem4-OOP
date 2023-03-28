@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+#include "controller/action_handler.h"
+#include "controller/messager.h"
 #include <qaction.h>
 #include <QFileDialog>
 #include <stdio.h>
@@ -7,9 +10,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene *scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    this->pool = pool;
+    item = figure_item_create();
 
     this->ui->graphicsView->scale(1, -1);
 }
@@ -31,60 +32,56 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Выберите фигуру"), "../../../../lab_02/data", tr("TXT Files (*.txt)"));
+    QString filename = QFileDialog::getOpenFileName(this, tr("Выберите фигуру"), "../../../../lab_01/data", tr("TXT Files (*.txt)"));
 
-    FILE *f = freopen(filename.toLocal8Bit().data(), "r", stdin);
-    if (f == NULL)
-    {
-        warningMessage("Что-то пошло не так", "Не удалось открыть выбранный файл.\nПопробуйте еще раз или выберите другой файл");
-        return;
-    }
+    action_handler_t handler;
+    action_handler_init(handler, OPEN, filename.toLocal8Bit().data());
+    error_t rc = action_handler_handle(handler);
+    if (rc)
+        error_message(rc);
 }
 
 void MainWindow::on_pushButton_rotate_clicked()
 {
-    if (this->item == nullptr)
-    {
-        warningMessage("Ошибка! Выберите фигуру", "Прежде чем выполнить поворот требуется выбрать фигуру. \n Для этого можно воспользоваться сочетанием клавиш «Ctrl+O» («Cmd+O»)");
-        return;
-    }
+    double ax = ui->doubleSpinBox_ax->value();
+    double ay = ui->doubleSpinBox_ay->value();
+    double az = ui->doubleSpinBox_az->value();
+    point_t params = point_init(ax, ay, az);
 
-    double ax = -ui->doubleSpinBox_ax->value();
-    double ay = -ui->doubleSpinBox_ay->value();
-    double az = -ui->doubleSpinBox_az->value();
-
-    this->pool->allocAndSend(ROTATE, this->item, ax, ay, az);
+    action_handler_t handler;
+    action_handler_init(handler, ROTATE, params);
+    error_t rc = action_handler_handle(handler);
+    if (rc)
+        error_message(rc);
 }
 
 
 void MainWindow::on_pushButton_move_clicked()
 {
-    if (this->item == nullptr)
-    {
-        warningMessage("Ошибка! Выберите фигуру", "Прежде чем выполнить перемещение требуется выбрать фигуру. \n Для этого можно воспользоваться сочетанием клавиш «Ctrl+O» («Cmd+O»)");
-        return;
-    }
-
     double dx = ui->doubleSpinBox_dx->value();
     double dy = ui->doubleSpinBox_dy->value();
     double dz = ui->doubleSpinBox_dz->value();
+    point_t params = point_init(dx, dy, dz);
 
-    this->pool->allocAndSend(MOVE, this->item, dx, dy, dz);
+    action_handler_t handler;
+    action_handler_init(handler, MOVE, params);
+    error_t rc = action_handler_handle(handler);
+    if (rc)
+        error_message(rc);
 }
 
 void MainWindow::on_pushButton_scale_clicked()
 {
-    if (this->item == nullptr)
-    {
-        warningMessage("Ошибка! Выберите фигуру", "Прежде чем выполнить масштабирование требуется выбрать фигуру. \n Для этого можно воспользоваться сочетанием клавиш «Ctrl+O» («Cmd+O»)");
-        return;
-    }
-
     double kx = ui->doubleSpinBox_kx->value();
     double ky = ui->doubleSpinBox_ky->value();
     double kz = ui->doubleSpinBox_kz->value();
+    point_t params = point_init(kx, ky, kz);
 
-    this->pool->allocAndSend(SCALE, this->item, kx, ky, kz);
+    action_handler_t handler;
+    action_handler_init(handler, SCALE, params);
+    error_t rc = action_handler_handle(handler);
+    if (rc)
+        error_message(rc);
 }
 
 void MainWindow::on_actionAboutTask_triggered()
@@ -108,5 +105,21 @@ void MainWindow::closeEvent(QCloseEvent* event)
     if (message_ask("Завершение работы", "Вы уверены что хотите выйти?"))
         event->ignore();
     else
+    {
+        action_handler_t handler;
+        action_handler_init_quit(handler);
         event->accept();
+    }
 }
+
+void MainWindow::on_action_save_triggered()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Выберите фигуру"), "../../../../lab_01/data", tr("TXT Files (*.txt)"));
+
+    action_handler_t handler;
+    action_handler_init(handler, SAVE, filename.toLocal8Bit().data());
+    error_t rc = action_handler_handle(handler);
+    if (rc)
+        error_message(rc);
+}
+

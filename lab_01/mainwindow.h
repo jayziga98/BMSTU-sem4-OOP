@@ -2,8 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "controller/action_handler.h"
-#include "controller/messager.h"
+#include "figure_item.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,6 +33,8 @@ private slots:
     void on_actionAboutAuthor_triggered();
 
     void closeEvent(QCloseEvent* event);
+
+    void on_action_save_triggered();
 
 private:
     Ui::MainWindow *ui;

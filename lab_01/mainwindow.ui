@@ -71,7 +71,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_kx_2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_ax">
               <property name="decimals">
                <number>2</number>
               </property>
@@ -106,7 +106,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_ky_3">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_ay">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -135,7 +135,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_ky_4">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_az">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -244,7 +244,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_dy_2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_dz">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -369,7 +369,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_ky_2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_kz">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -431,11 +431,7 @@
      <string>Файл</string>
     </property>
     <addaction name="action"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Правка</string>
-    </property>
+    <addaction name="action_save"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -448,7 +444,6 @@
     <addaction name="actionAboutProgram"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menuEdit"/>
    <addaction name="menu_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -488,6 +483,11 @@
   <action name="actionAboutTask">
    <property name="text">
     <string>Задание</string>
+   </property>
+  </action>
+  <action name="action_save">
+   <property name="text">
+    <string>Сохранить</string>
    </property>
   </action>
  </widget>

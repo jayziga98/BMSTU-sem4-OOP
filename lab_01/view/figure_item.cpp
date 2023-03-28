@@ -15,66 +15,43 @@ void figure_item_update_line(line_item_t *item, point_t &p1, point_t &p2)
     item->setLine(QLineF(p1.x, p1.y, p2.x, p2.y));
 }
 
-void figure_item_init(figure_item_t *item, figure_t &figure)
+figure_item_t *figure_item_init(figure_t &figure)
 {
-    for (auto link: figure.links)
+    figure_item_t *item = figure_item_create();
+
+    for (int link_index = 0; link_index < figure_links_size(figure); link_index++)
     {
-        figure_item_add_line(item, figure_point(figure, link.first), figure_point(figure, link.second));
+        point_link_t link = figure_link(figure, link_index);
+
+        point_t f = figure_point(figure, link.first);
+        point_t s = figure_point(figure, link.first);
+
+        figure_item_add_line(item, f, s);
     }
+
+    return item;
 }
 
 void figure_item_update(figure_item_t *item, figure_t &figure)
 {
-    auto link = figure.links.begin();
+    int link_index = 0;
     for (auto child_item: item->childItems())
     {
-        figure_item_update_line(item, figure_point(figure, link->first), figure_point(figure, link->second));
-        link++;
+        point_link_t link = figure_link(figure, link_index);
+
+        line_item_t *line_item = qgraphicsitem_cast<line_item_t *>(child_item);
+
+        point_t f = figure_point(figure, link.first);
+        point_t s = figure_point(figure, link.first);
+
+        figure_item_update_line(line_item, f, s);
+
+        link_index++;
     }
 }
 
-void figure_item_rotate(figure_item_t *item, figure_t &figure, double ax, double ay, double az)
+
+void figure_item_clear(figure_item_t *item, figure_t &figure)
 {
-    figure_rotate(figure, ax, ay, az);
-    figure_item_update(item, figure);
-}
-
-void figure_item_move(figure_item_t *item, figure_t &figure, double dx, double dy, double dz)
-{
-    figure_move(figure, dx, dy, dz);
-    figure_item_update(item, figure);
-}
-
-void figure_item_scale(figure_item_t *item, figure_t &figure, double kx, double ky, double kz)
-{
-    figure_scale(figure, kx, ky, kz);
-    figure_item_update(item, figure);
-}
-
-void figure_item_print(const char *filename, bool &ok)
-{
-
-}
-
-figure_item_t *figure_item_scan(const char *filename, bool &ok)
-{
-    FILE *stream = fopen(filename, "r");
-    if (f == NULL)
-    {
-        return;
-    }
-    fclose(stream);
-
-    return figure_item_scan(stream, ok);
-}
-
-figure_item_t *figure_item_scan(FILE *stream, bool &ok)
-{
-    figure_t figure = figure_scan(stream, ok);
-
-    figure_item_t *figure_item = figure_item_create();
-
-    figure_item_init(figure_item, figure);
-
-    return figure_item;
+    delete item;
 }

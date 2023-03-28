@@ -8,13 +8,13 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += $$PWD/undoredo
 INCLUDEPATH += $$PWD/model
 INCLUDEPATH += $$PWD/view
 
 SOURCES += \
     controller/action_handler.cpp \
     controller/drawer.cpp \
+    controller/errors.cpp \
     controller/messager.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,21 +22,22 @@ SOURCES += \
     model/figure.cpp \
     model/point.cpp \
     model/point_link.cpp \
-    undoredo/stask.cpp \
-    undoredo/staskpool.cpp \
+    model/points.cpp \
+    model/points_links.cpp \
     view/figure_item.cpp
 
 HEADERS += \
     controller/action_handler.h \
     controller/drawer.h \
+    controller/errors.h \
     controller/messager.h \
     mainwindow.h \
     model/bounding_cube.h \
     model/figure.h \
     model/point.h \
     model/point_link.h \
-    undoredo/stask.h \
-    undoredo/staskpool.h \
+    model/points.h \
+    model/points_links.h \
     view/figure_item.h
 
 FORMS += \

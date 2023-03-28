@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 void message_task();
-void message_about()
+void message_about();
 void message_author();
 
 void message_warning(QString title, QString text);

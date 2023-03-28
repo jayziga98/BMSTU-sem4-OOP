@@ -9,7 +9,7 @@ typedef struct {
     QGraphicsItem *item;
 } drawer_t;
 
-drawer_t drawer(QGraphicsScene *scene, QGraphicsItem *item);
+drawer_t drawer_init(QGraphicsScene *scene, QGraphicsItem *item);
 void drawer_draw(drawer_t &drawer);
 void drawer_remove(drawer_t &drawer);
 

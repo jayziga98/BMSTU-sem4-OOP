@@ -12,11 +12,7 @@ typedef struct {
     double depth;
 } bounding_cube_t;
 
-void bounding_cube_init(bounding_cube_t &bc, double x, double y, double z, double width, double height, double depth);
-bounding_cube_t bounding_cube(double x, double y, double z, double width, double height, double depth);
-
-bounding_cube_t bounding_cube(double x1, double y1, double z1, double x2, double y2, double z2);
-void bounding_cube_init(double x1, double y1, double z1, double x2, double y2, double z2);
+bounding_cube_t bounding_cube_init(point_t min_corner, point_t max_corner);
 
 double bounding_cube_center_x(bounding_cube_t &bc);
 double bounding_cube_center_y(bounding_cube_t &bc);

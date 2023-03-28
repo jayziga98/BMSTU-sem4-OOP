@@ -1,6 +1,6 @@
 #include "drawer.h"
 
-drawer_t drawer(QGraphicsScene *scene, QGraphicsItem *item)
+drawer_t drawer_init(QGraphicsScene *scene, QGraphicsItem *item)
 {
     drawer_t d;
 

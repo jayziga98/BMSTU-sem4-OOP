@@ -1,26 +1,30 @@
 #ifndef ACTIONS_HANDLER_H
 #define ACTIONS_HANDLER_H
 
-#include "drawer.h"
-#include "figure_item.h"
+#include "point.h"
 
 enum actionType {
     OPEN,
     SAVE,
     MOVE,
     ROTATE,
-    SCALE
+    SCALE,
+    QUIT
 };
 
 typedef struct {
     actionType type;
-    figure_item_t *item;
     union
     {
-        QString *filename;
-        drawer_t drawer;
-        point_t param;
+        const char *filename;
+        point_t params;
     };
 } action_handler_t;
+
+void action_handler_init(action_handler_t &handler, actionType type, const char *filename);
+void action_handler_init(action_handler_t &handler, actionType type, point_t &params);
+void action_handler_init_quit(action_handler_t &handler);
+
+error_t action_handler_handle(action_handler_t &handler);
 
 #endif // ACTIONS_HANDLER_H

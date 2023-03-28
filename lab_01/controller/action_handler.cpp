@@ -1,26 +1,52 @@
 #include "action_handler.h"
+#include "figure.h"
 
-void action_handler_handle(action_handler_t &handler)
+void action_handler_init(action_handler_t &handler, actionType type, const char *filename)
 {
+    handler.type = type;
+    handler.filename = filename;
+}
+
+void action_handler_init(action_handler_t &handler, actionType type, point_t &params)
+{
+    handler.type = type;
+    handler.params = params;
+}
+
+void action_handler_init_quit(action_handler_t &handler)
+{
+    handler.type = QUIT;
+}
+
+error_t action_handler_handle(action_handler_t &handler)
+{
+    error_t rc = SUCCESS;
+
+    static figure_t figure = figure_init();
+
     switch (handler.type)
     {
     case OPEN:
-        handler.item = figure_item_scan(handler.filename);
+        rc = figure_load(figure, handler.filename);
         break;
     case SAVE:
-        figure_item_print(handler.item)
+        rc = figure_save(figure, handler.filename);
         break;
     case MOVE:
-        figure_item_move(handler.item, handler.param);
+        rc = figure_move(figure, handler.params);
         break;
     case ROTATE:
-        figure_item_rotate(handler.item, handler.param);
+        rc = figure_rotate(figure, handler.params);
         break;
     case SCALE:
-        figure_item_scale(handler.item, handler.param);
+        rc = figure_scale(figure, handler.params);
         break;
+    case QUIT:
+        figure_clear(figure);
     default:
-        break;
+        rc = COMMAND_UNDEFINED;
     }
+
+    return rc;
 }
 
