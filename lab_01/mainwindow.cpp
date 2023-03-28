@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "figure_item.h"
 #include "ui_mainwindow.h"
 
 #include "controller/action_handler.h"
@@ -20,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     QGraphicsScene *scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    item = figure_item_create();
-
     this->ui->graphicsView->scale(1, -1);
 }
 
@@ -39,6 +38,16 @@ void MainWindow::on_action_triggered()
     error_t rc = action_handler_handle(handler);
     if (rc)
         error_message(rc);
+    else
+    {
+        ui->graphicsView->scene()->clear();
+
+        drawer_t drawer = drawer_init(ui->graphicsView->scene());
+        action_handler_init(handler, DRAW, drawer);
+        error_t rc = action_handler_handle(handler);
+        if (rc)
+            error_message(rc);
+    }
 }
 
 void MainWindow::on_pushButton_rotate_clicked()
@@ -53,6 +62,16 @@ void MainWindow::on_pushButton_rotate_clicked()
     error_t rc = action_handler_handle(handler);
     if (rc)
         error_message(rc);
+    else
+    {
+        ui->graphicsView->scene()->clear();
+
+        drawer_t drawer = drawer_init(ui->graphicsView->scene());
+        action_handler_init(handler, DRAW, drawer);
+        error_t rc = action_handler_handle(handler);
+        if (rc)
+            error_message(rc);
+    }
 }
 
 
@@ -68,6 +87,17 @@ void MainWindow::on_pushButton_move_clicked()
     error_t rc = action_handler_handle(handler);
     if (rc)
         error_message(rc);
+    else
+    {
+        ui->graphicsView->scene()->clear();
+
+        drawer_t drawer = drawer_init(ui->graphicsView->scene());
+        action_handler_init(handler, DRAW, drawer);
+        error_t rc = action_handler_handle(handler);
+
+        if (rc)
+            error_message(rc);
+    }
 }
 
 void MainWindow::on_pushButton_scale_clicked()
@@ -82,6 +112,17 @@ void MainWindow::on_pushButton_scale_clicked()
     error_t rc = action_handler_handle(handler);
     if (rc)
         error_message(rc);
+    else
+    {
+        ui->graphicsView->scene()->clear();
+
+        drawer_t drawer = drawer_init(ui->graphicsView->scene());
+        action_handler_init(handler, DRAW, drawer);
+        error_t rc = action_handler_handle(handler);
+
+        if (rc)
+            error_message(rc);
+    }
 }
 
 void MainWindow::on_actionAboutTask_triggered()
@@ -123,3 +164,25 @@ void MainWindow::on_action_save_triggered()
         error_message(rc);
 }
 
+void action_handler_init(action_handler_t &handler, actionType type, const char *filename)
+{
+    handler.type = type;
+    handler.filename = filename;
+}
+
+void action_handler_init(action_handler_t &handler, actionType type, point_t &params)
+{
+    handler.type = type;
+    handler.params = params;
+}
+
+void action_handler_init(action_handler_t &handler, actionType type, drawer_t &drawer)
+{
+    handler.type = type;
+    handler.drawer = drawer;
+}
+
+void action_handler_init_quit(action_handler_t &handler)
+{
+    handler.type = QUIT;
+}

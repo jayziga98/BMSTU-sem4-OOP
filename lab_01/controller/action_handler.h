@@ -1,6 +1,7 @@
 #ifndef ACTIONS_HANDLER_H
 #define ACTIONS_HANDLER_H
 
+#include "controller/drawer.h"
 #include "point.h"
 
 enum actionType {
@@ -9,7 +10,9 @@ enum actionType {
     MOVE,
     ROTATE,
     SCALE,
-    QUIT
+    QUIT,
+    UPDATE,
+    DRAW
 };
 
 typedef struct {
@@ -18,12 +21,9 @@ typedef struct {
     {
         const char *filename;
         point_t params;
+        drawer_t drawer;
     };
 } action_handler_t;
-
-void action_handler_init(action_handler_t &handler, actionType type, const char *filename);
-void action_handler_init(action_handler_t &handler, actionType type, point_t &params);
-void action_handler_init_quit(action_handler_t &handler);
 
 error_t action_handler_handle(action_handler_t &handler);
 

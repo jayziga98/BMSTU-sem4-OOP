@@ -3,13 +3,11 @@
 
 #include "point_link.h"
 
-struct points_links
+typedef struct
 {
     int size;
     point_link_t *data;
-};
-
-using points_links_t = struct points_links;
+} points_links_t;
 
 void links_init(points_links_t &links);
 

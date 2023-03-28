@@ -1,22 +1,6 @@
 #include "action_handler.h"
 #include "figure.h"
-
-void action_handler_init(action_handler_t &handler, actionType type, const char *filename)
-{
-    handler.type = type;
-    handler.filename = filename;
-}
-
-void action_handler_init(action_handler_t &handler, actionType type, point_t &params)
-{
-    handler.type = type;
-    handler.params = params;
-}
-
-void action_handler_init_quit(action_handler_t &handler)
-{
-    handler.type = QUIT;
-}
+#include <qdebug.h>
 
 error_t action_handler_handle(action_handler_t &handler)
 {
@@ -43,6 +27,9 @@ error_t action_handler_handle(action_handler_t &handler)
         break;
     case QUIT:
         figure_clear(figure);
+    case DRAW:
+        drawer_draw(handler.drawer, figure);
+        break;
     default:
         rc = COMMAND_UNDEFINED;
     }

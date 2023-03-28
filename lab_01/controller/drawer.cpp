@@ -1,23 +1,16 @@
 #include "drawer.h"
+#include "figure_item.h"
 
-drawer_t drawer_init(QGraphicsScene *scene, QGraphicsItem *item)
+drawer_t drawer_init(QGraphicsScene *scene)
 {
     drawer_t d;
 
     d.scene = scene;
-    d.item = item;
 
     return d;
 }
 
-void drawer_draw(drawer_t &drawer)
+void drawer_draw(drawer_t &drawer, figure_t &figure)
 {
-    if (drawer.item)
-        drawer.scene->addItem(drawer.item);
-}
-
-void drawer_remove(drawer_t &drawer)
-{
-    if (drawer.item)
-        drawer.scene->removeItem(drawer.item);
+    drawer.scene->addItem(figure_item_init(figure));
 }

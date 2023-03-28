@@ -1,4 +1,5 @@
 #include "figure.h"
+#include <QDebug>
 
 figure_t figure_init()
 {

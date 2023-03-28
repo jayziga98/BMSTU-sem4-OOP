@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "controller/drawer.h"
+#include "controller/action_handler.h"
 #include <QMainWindow>
-#include "figure_item.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -11,7 +12,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    figure_item_t *item = nullptr;
+    drawer_t drawer;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -40,3 +41,8 @@ private:
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
+
+void action_handler_init(action_handler_t &handler, actionType type, const char *filename);
+void action_handler_init(action_handler_t &handler, actionType type, point_t &params);
+void action_handler_init(action_handler_t &handler, actionType type, drawer_t &drawer);
+void action_handler_init_quit(action_handler_t &handler);

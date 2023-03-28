@@ -2,15 +2,13 @@
 #define DRAWER_H
 
 #include <QGraphicsScene>
-#include <QGraphicsItem>
+#include "figure.h"
 
 typedef struct {
     QGraphicsScene *scene;
-    QGraphicsItem *item;
 } drawer_t;
 
-drawer_t drawer_init(QGraphicsScene *scene, QGraphicsItem *item);
-void drawer_draw(drawer_t &drawer);
-void drawer_remove(drawer_t &drawer);
+drawer_t drawer_init(QGraphicsScene *scene);
+void drawer_draw(drawer_t &drawer, figure_t &figure);
 
 #endif // DRAWER_H

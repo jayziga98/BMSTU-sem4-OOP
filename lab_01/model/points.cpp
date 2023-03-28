@@ -31,7 +31,7 @@ void points_clear(points_t &points)
     points_init(points);
 }
 
-error_t points_scan(points &points, FILE *stream)
+error_t points_scan(points_t &points, FILE *stream)
 {
     if (stream == NULL)
         return FILE_OPEN_ERROR;
