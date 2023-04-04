@@ -31,6 +31,9 @@ void error_message(error_t &error)
         case COEFF_SCALE_ERROR:
             QMessageBox::critical(NULL, "Ошибка!", "Коэффициенты масштабирования не должны равняться 0!");
             break;
+        case POSSIBLE_LEAK_ERROR:
+            QMessageBox::critical(NULL, "Ошибка!", "Возможна утечка памяти при отрисовке фигуры!");
+            break;
         case NOT_DATA_WRITE_ERROR:
             QMessageBox::information(NULL, "Информация!", "Нет данных фигуры для записи!");
             break;

@@ -9,8 +9,8 @@ typedef QGraphicsLineItem line_item_t;
 
 figure_item_t *figure_item_create();
 
-void figure_item_add_line(figure_item_t *item, point_t &p1, point_t &p2);
-figure_item_t *figure_item_init(figure_t &figure);
+error_t figure_item_add_line(figure_item_t *item, point_t &p1, point_t &p2);
+figure_item_t *figure_item_init(figure_t &figure, error_t &err);
 void figure_item_clear(figure_item_t *item);
 
 #endif // FIGURE_ITEM_H

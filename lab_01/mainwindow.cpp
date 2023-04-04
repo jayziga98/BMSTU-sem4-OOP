@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->graphicsView->setScene(scene);
 
     this->ui->graphicsView->scale(1, -1);
+
+    item = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -35,16 +37,18 @@ void MainWindow::on_action_triggered()
 
     action_handler_t handler;
     action_handler_init(handler, OPEN, filename.toLocal8Bit().data());
-    error_t rc = action_handler_handle(handler);
+    error_t rc = action_handler_handle(handler, nullptr);
     if (rc)
         error_message(rc);
     else
     {
-        ui->graphicsView->scene()->clear();
+        if (item != nullptr)
+            figure_item_clear(item), item = nullptr;
 
         drawer_t drawer = drawer_init(ui->graphicsView->scene());
         action_handler_init(handler, DRAW, drawer);
-        error_t rc = action_handler_handle(handler);
+
+        error_t rc = action_handler_handle(handler, &item);
         if (rc)
             error_message(rc);
     }
@@ -59,16 +63,17 @@ void MainWindow::on_pushButton_rotate_clicked()
 
     action_handler_t handler;
     action_handler_init(handler, ROTATE, params);
-    error_t rc = action_handler_handle(handler);
+    error_t rc = action_handler_handle(handler, nullptr);
     if (rc)
         error_message(rc);
     else
     {
-        ui->graphicsView->scene()->clear();
+        if (item != nullptr)
+            figure_item_clear(item), item = nullptr;
 
         drawer_t drawer = drawer_init(ui->graphicsView->scene());
         action_handler_init(handler, DRAW, drawer);
-        error_t rc = action_handler_handle(handler);
+        error_t rc = action_handler_handle(handler, &item);
         if (rc)
             error_message(rc);
     }
@@ -84,16 +89,17 @@ void MainWindow::on_pushButton_move_clicked()
 
     action_handler_t handler;
     action_handler_init(handler, MOVE, params);
-    error_t rc = action_handler_handle(handler);
+    error_t rc = action_handler_handle(handler, nullptr);
     if (rc)
         error_message(rc);
     else
     {
-        ui->graphicsView->scene()->clear();
+        if (item != nullptr)
+            figure_item_clear(item), item = nullptr;
 
         drawer_t drawer = drawer_init(ui->graphicsView->scene());
         action_handler_init(handler, DRAW, drawer);
-        error_t rc = action_handler_handle(handler);
+        error_t rc = action_handler_handle(handler, &item);
 
         if (rc)
             error_message(rc);
@@ -109,16 +115,17 @@ void MainWindow::on_pushButton_scale_clicked()
 
     action_handler_t handler;
     action_handler_init(handler, SCALE, params);
-    error_t rc = action_handler_handle(handler);
+    error_t rc = action_handler_handle(handler, nullptr);
     if (rc)
         error_message(rc);
     else
     {
-        ui->graphicsView->scene()->clear();
+        if (item != nullptr)
+            figure_item_clear(item), item = nullptr;
 
         drawer_t drawer = drawer_init(ui->graphicsView->scene());
         action_handler_init(handler, DRAW, drawer);
-        error_t rc = action_handler_handle(handler);
+        error_t rc = action_handler_handle(handler, &item);
 
         if (rc)
             error_message(rc);
@@ -159,7 +166,7 @@ void MainWindow::on_action_save_triggered()
 
     action_handler_t handler;
     action_handler_init(handler, SAVE, filename.toLocal8Bit().data());
-    error_t rc = action_handler_handle(handler);
+    error_t rc = action_handler_handle(handler, nullptr);
     if (rc)
         error_message(rc);
 }

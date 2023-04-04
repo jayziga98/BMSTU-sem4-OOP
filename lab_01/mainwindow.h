@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     drawer_t drawer;
+    figure_item_t *item;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);

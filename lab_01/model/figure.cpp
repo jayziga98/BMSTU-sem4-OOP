@@ -6,7 +6,6 @@ figure_t figure_init()
     figure_t figure;
 
     points_init(figure.points);
-
     links_init(figure.links);
 
     return figure;
@@ -41,6 +40,8 @@ error_t figure_scan(figure_t &figure, FILE *stream)
         rc = links_scan(figure.links, stream);
         if (rc)
             points_clear(figure.points);
+        else
+            rc = figure_center_init(figure);
     }
 
     return rc;
@@ -73,34 +74,11 @@ error_t figure_load(figure_t &figure, const char *filename)
     return rc;
 }
 
-point_t figure_center(figure_t &figure)
-{
-    return bounding_cube_center(figure.bounds);
-}
-
-point_t figure_center_negative(figure_t &figure)
-{
-    point_t center = bounding_cube_center(figure.bounds);
-    point_reflect_xyz(center);
-    return center;
-}
-
 error_t figure_rotate(figure_t &figure, point_t &params)
 {
     error_t rc = SUCCESS;
 
-    point_t center = figure_center(figure);
-    point_t center_negative = figure_center_negative(figure);
-
-    rc = points_move(figure.points, center_negative);
-
-    if (rc == SUCCESS)
-    {
-        rc = points_rotate(figure.points, params);
-
-        if (rc == SUCCESS)
-            rc = points_move(figure.points, center);
-    }
+    rc = points_rotate(figure.points, figure.center, params);
 
     return rc;
 }
@@ -109,18 +87,7 @@ error_t figure_move(figure_t &figure, point_t &params)
 {
     error_t rc = SUCCESS;
 
-    point_t center = figure_center(figure);
-    point_t center_negative = figure_center_negative(figure);
-
-    rc = points_move(figure.points, center_negative);
-
-    if (rc == SUCCESS)
-    {
-        rc = points_move(figure.points, params);
-
-        if (rc == SUCCESS)
-            rc = points_move(figure.points, center);
-    }
+    rc = points_move(figure.points, params);
 
     return rc;
 }
@@ -129,33 +96,16 @@ error_t figure_scale(figure_t &figure, point_t &params)
 {
     error_t rc = SUCCESS;
 
-    point_t center = figure_center(figure);
-    point_t center_negative = figure_center_negative(figure);
-
-    rc = points_move(figure.points, center_negative);
-
-    if (rc == SUCCESS)
-    {
-        rc = points_scale(figure.points, params);
-
-        if (rc == SUCCESS)
-            rc = points_move(figure.points, center);
-    }
+    rc = points_scale(figure.points, figure.center, params);
 
     return rc;
 }
 
-error_t figure_bounding_cube_update(figure_t &figure)
+error_t figure_center_init(figure_t &figure)
 {
     error_t rc = SUCCESS;
 
-    point_t min_corner;
-    point_t max_corner;
-
-    rc = points_corners(min_corner, max_corner, figure.points);
-
-    if (rc == SUCCESS)
-        figure.bounds = bounding_cube_init(min_corner, max_corner);
+    rc = points_center(figure.center, figure.points);
 
     return rc;
 }

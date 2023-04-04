@@ -25,6 +25,6 @@ typedef struct {
     };
 } action_handler_t;
 
-error_t action_handler_handle(action_handler_t &handler);
+error_t action_handler_handle(action_handler_t &handler, figure_item_t **item);
 
 #endif // ACTIONS_HANDLER_H

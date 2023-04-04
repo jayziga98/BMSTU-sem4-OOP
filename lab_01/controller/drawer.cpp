@@ -1,5 +1,4 @@
 #include "drawer.h"
-#include "figure_item.h"
 
 drawer_t drawer_init(QGraphicsScene *scene)
 {
@@ -10,7 +9,17 @@ drawer_t drawer_init(QGraphicsScene *scene)
     return d;
 }
 
-void drawer_draw(drawer_t &drawer, figure_t &figure)
+error_t drawer_draw(drawer_t &drawer, figure_t &figure, figure_item_t **item)
 {
-    drawer.scene->addItem(figure_item_init(figure));
+    if (item == nullptr)
+        return POSSIBLE_LEAK_ERROR;
+
+    error_t err;
+
+    *item = figure_item_init(figure, err);
+
+    if (err == SUCCESS)
+        drawer.scene->addItem(*item);
+
+    return err;
 }

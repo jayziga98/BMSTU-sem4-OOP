@@ -1,4 +1,5 @@
 #include "points.h"
+#include "bounding_cube.h"
 #include "controller/errors.h"
 
 void points_init(points_t &points)
@@ -94,13 +95,13 @@ error_t points_print(const points_t &points, FILE *stream)
     return rc;
 }
 
-error_t points_rotate(points_t &points, point_t &params)
+error_t points_rotate(points_t &points, point_t &origin, point_t &params)
 {
     if (!points.data)
         return FIGURE_NOT_LOADED;
 
     for (int i = 0; i < points.size; i++)
-        point_rotate(points.data[i], params);
+        point_rotate(points.data[i], origin, params);
 
     return SUCCESS;
 }
@@ -117,13 +118,13 @@ error_t points_move(points_t &points, point_t &params)
 }
 
 
-error_t points_scale(points_t &points, point_t &params)
+error_t points_scale(points_t &points, point_t &origin, point_t &params)
 {
     if (!points.data)
         return FIGURE_NOT_LOADED;
 
     for (int i = 0; i < points.size; i++)
-        point_scale(points.data[i], params);
+        point_scale(points.data[i], origin, params);
 
     return SUCCESS;
 }
@@ -156,6 +157,25 @@ error_t points_corners(point_t &min_corner, point_t &max_corner, points_t &point
     max_corner = point_init(maxx, maxy, maxz);
 
     return SUCCESS;
+}
+
+error_t points_center(point_t &center, points_t &points)
+{
+    if (!points.data)
+        return FIGURE_NOT_LOADED;
+
+    error_t rc = SUCCESS;
+
+    point_t mini, maxi;
+    rc = points_corners(mini, maxi, points);
+
+    if (rc == SUCCESS)
+    {
+        bounding_cube_t bounds = bounding_cube_init(mini, maxi);
+        center = bounding_cube_center(bounds);
+    }
+
+    return rc;
 }
 
 point_t points_point(points_t &points, int index)

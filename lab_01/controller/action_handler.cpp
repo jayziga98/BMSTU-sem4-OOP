@@ -1,8 +1,8 @@
 #include "action_handler.h"
 #include "figure.h"
-#include <qdebug.h>
+#include "figure_item.h"
 
-error_t action_handler_handle(action_handler_t &handler)
+error_t action_handler_handle(action_handler_t &handler, figure_item_t **item)
 {
     error_t rc = SUCCESS;
 
@@ -28,7 +28,7 @@ error_t action_handler_handle(action_handler_t &handler)
     case QUIT:
         figure_clear(figure);
     case DRAW:
-        drawer_draw(handler.drawer, figure);
+        rc = drawer_draw(handler.drawer, figure, item);
         break;
     default:
         rc = COMMAND_UNDEFINED;

@@ -21,8 +21,8 @@ error_t point_scan(point_t &point, FILE *stream);
 error_t point_print(point_t &point, FILE *stream);
 
 void point_move(point_t &point, point_t &params);
-void point_rotate(point_t &point, point_t &params);
-void point_scale(point_t &point, point_t &params);
+void point_rotate(point_t &point, point_t &origin, point_t &params);
+void point_scale(point_t &point, point_t &origin, point_t &params);
 
 void point_rotate_x(point_t &point, double ax);
 void point_rotate_y(point_t &point, double ay);

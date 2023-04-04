@@ -23,11 +23,12 @@ error_t points_scan_data(points_t &points, FILE *stream);
 
 error_t points_print(const points_t &points, FILE *stream);
 
-error_t points_rotate(points_t &points, point_t &params);
+error_t points_rotate(points_t &points, point_t &origin, point_t &params);
 error_t points_move(points_t &points, point_t &params);
-error_t points_scale(points_t &points, point_t &params);
+error_t points_scale(points_t &points, point_t &origin, point_t &params);
 
 error_t points_corners(point_t &min_corner, point_t &max_corner, points_t &points);
+error_t points_center(point_t &center, points_t &points);
 
 point_t points_point(points_t &points, int index);
 bool points_empty(points_t &points);

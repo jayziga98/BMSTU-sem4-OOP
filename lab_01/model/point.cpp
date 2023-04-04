@@ -40,6 +40,13 @@ error_t point_print(point_t &point, FILE *stream)
     return rc;
 }
 
+void point_sub(point_t &point, point_t &params)
+{
+    point.x -= params.x;
+    point.y -= params.y;
+    point.z -= params.z;
+}
+
 void point_move(point_t &point, point_t &params)
 {
     point.x += params.x;
@@ -47,11 +54,15 @@ void point_move(point_t &point, point_t &params)
     point.z += params.z;
 }
 
-void point_rotate(point_t &point, point_t &params)
+void point_rotate(point_t &point, point_t &origin, point_t &params)
 {
+    point_sub(point, origin);
+
     point_rotate_x(point, params.x);
     point_rotate_y(point, params.y);
     point_rotate_z(point, params.z);
+
+    point_move(point, origin);
 }
 
 void point_reflect_xyz(point_t &point)
@@ -61,11 +72,15 @@ void point_reflect_xyz(point_t &point)
     point.z *= -1;
 }
 
-void point_scale(point_t &point, point_t &params)
+void point_scale(point_t &point, point_t &origin, point_t &params)
 {
+    point_sub(point, origin);
+
     point.x *= params.x;
     point.y *= params.y;
     point.z *= params.z;
+
+    point_move(point, origin);
 }
 
 void point_rotate_x(point_t &point, double ax)
