@@ -16,12 +16,12 @@ error_t figure_item_add_line(figure_item_t *item, point_t &p1, point_t &p2)
     return SUCCESS;
 }
 
-figure_item_t *figure_item_init(figure_t &figure, error_t &err)
+error_t figure_item_init(figure_item_ptr_t &figure_item_ptr, figure_t &figure)
 {
-    err = SUCCESS;
+    error_t err = SUCCESS;
 
-    figure_item_t *item = figure_item_create();
-    if (item == nullptr)
+    figure_item_ptr = figure_item_create();
+    if (figure_item_ptr == nullptr)
         err = MEMORY_ALLOCATE_ERROR;
 
     for (int link_index = 0; err == SUCCESS && link_index < figure_links_size(figure); link_index++)
@@ -31,10 +31,10 @@ figure_item_t *figure_item_init(figure_t &figure, error_t &err)
         point_t f = figure_point(figure, link.first);
         point_t s = figure_point(figure, link.second);
 
-        err = figure_item_add_line(item, f, s);
+        err = figure_item_add_line(figure_item_ptr, f, s);
     }
 
-    return item;
+    return err;
 }
 
 void figure_item_clear(figure_item_t *item)

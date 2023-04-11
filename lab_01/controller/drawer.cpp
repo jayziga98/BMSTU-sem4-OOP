@@ -9,17 +9,12 @@ drawer_t drawer_init(QGraphicsScene *scene)
     return d;
 }
 
-error_t drawer_draw(drawer_t &drawer, figure_t &figure, figure_item_t **item)
+error_t drawer_draw(drawer_t &drawer, figure_t &figure, figure_item_ptr_t &item_ptr)
 {
-    if (item == nullptr)
-        return POSSIBLE_LEAK_ERROR;
-
-    error_t err;
-
-    *item = figure_item_init(figure, err);
+    error_t err = figure_item_init(item_ptr, figure);
 
     if (err == SUCCESS)
-        drawer.scene->addItem(*item);
+        drawer.scene->addItem(item_ptr);
 
     return err;
 }

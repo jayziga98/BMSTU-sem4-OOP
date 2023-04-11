@@ -2,7 +2,7 @@
 #include "figure.h"
 #include "figure_item.h"
 
-error_t action_handler_handle(action_handler_t &handler, figure_item_t **item)
+error_t action_handler_handle(action_handler_t &handler, figure_item_ptr_t &item_ptr)
 {
     error_t rc = SUCCESS;
 
@@ -28,7 +28,7 @@ error_t action_handler_handle(action_handler_t &handler, figure_item_t **item)
     case QUIT:
         figure_clear(figure);
     case DRAW:
-        rc = drawer_draw(handler.drawer, figure, item);
+        rc = drawer_draw(handler.drawer, figure, item_ptr);
         break;
     default:
         rc = COMMAND_UNDEFINED;
